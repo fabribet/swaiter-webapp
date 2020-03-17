@@ -1,0 +1,25 @@
+.container {
+  height: 100%;
+  position: relative;
+  background: #5C97FF;
+  overflow: hidden;
+  /* You could use :after - it doesn't really matter */
+  
+  &::before {
+    content: ' ';
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.6;
+    background-image: url('./imgs/beach-restaurant.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+
+  .wrapper {
+    z-index: 1;
+  }
+}
