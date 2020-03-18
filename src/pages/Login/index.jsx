@@ -12,6 +12,9 @@ import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container'
 
+import { useHistory, useLocation } from 'react-router-dom'
+
+import auth from '../../utils/auth'
 import styles from './styles.module.scss'
 
 const useStyles = makeStyles(theme => ({
@@ -36,6 +39,17 @@ const useStyles = makeStyles(theme => ({
 
 export default function Login () {
   const classes = useStyles()
+  const history = useHistory()
+  const location = useLocation()
+
+  const { from } = location.state || { from: { pathname: '/' } }
+
+  const login = () => {
+    auth.authenticate(() => {
+      console.log('here we are')
+      history.replace(from)
+    })
+  }
 
   return (
     <div className={styles.container}>
@@ -82,6 +96,7 @@ export default function Login () {
                 variant="contained"
                 color="secondary"
                 className={classes.submit}
+                onClick={login}
               >
                 Sign In
               </Button>
