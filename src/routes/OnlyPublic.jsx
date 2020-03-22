@@ -1,34 +1,30 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Route, Redirect } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import { Route, Redirect } from 'react-router-dom'
 
 /**
  * A wrapper for <Route> that redirects to the login
  * screen if you're not yet authenticated.
  */
-export default function PrivateRoute ({ children, ...rest }) {
+export default function OnlyPublic ({ children, User, ...rest }) {
   const user = useSelector(state => state.User)
 
   return (
     <Route
       {...rest}
       render={({ location }) =>
-        user && user.token ? (
+        !user || !user.token ? (
           children
         ) : (
-          <Redirect
-            to={{
-              pathname: '/login',
-              state: { from: location }
-            }}
-          />
+          <Redirect to={{ pathname: location.state ? location.state.from.pathname : '/' }} />
         )
       }
     />
   )
 }
 
-PrivateRoute.propTypes = {
-  children: PropTypes.object
+OnlyPublic.propTypes = {
+  children: PropTypes.object,
+  User: PropTypes.object
 }

@@ -6,6 +6,7 @@ import moment from 'moment'
 // import style from './styles.scss'
 
 import Table from '../../components/Table'
+import SessionHeader from '../../components/SessionHeader'
 
 const ORDER_STATUSES = {
   PENDING: 'pending',
@@ -108,20 +109,23 @@ const mappedOrders = FAKE_ORDERS.map(order => {
  */
 export default function HomePage () {
   return (
-    <Table
-      name="Dashboard"
-      headers={[
-        { name: 'Order', key: 'order' },
-        { name: 'price', key: 'price' },
-        { name: 'Name', key: 'name' },
-        { name: 'Location', key: 'location' },
-        { name: 'Remaining Time', key: 'ETA' },
-        { name: 'Status', key: 'status' }
-      ]}
-      content={mappedOrders}
-      orderBy="ETA"
-      // footerText='Some footer info'
-    />
+    <div>
+      <SessionHeader />
+      <Table
+        name="Dashboard"
+        headers={[
+          { name: 'Order', key: 'order' },
+          { name: 'price', key: 'price' },
+          { name: 'Name', key: 'name' },
+          { name: 'Location', key: 'location' },
+          { name: 'Remaining Time', key: 'ETA' },
+          { name: 'Status', key: 'status' }
+        ]}
+        content={mappedOrders}
+        orderBy="ETA"
+        // footerText='Some footer info'
+      />
+    </div>
   )
 }
 
