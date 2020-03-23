@@ -1,10 +1,9 @@
-import React from 'react'
-import { Badge } from 'reactstrap'
+import React, { useEffect } from 'react'
+import { Badge, Alert } from 'reactstrap'
 import moment from 'moment'
-// import PropTypes from 'prop-types'
+import { useDispatch, useSelector } from 'react-redux'
 
-// import style from './styles.scss'
-
+import { actions } from '../../actions/Orders'
 import Table from '../../components/Table'
 import SessionHeader from '../../components/SessionHeader'
 
@@ -20,64 +19,13 @@ const STATUS_COLORS = {
   [ORDER_STATUSES.IN_PROGRESS]: 'info'
 }
 
-const FAKE_ORDERS = [
-  {
-    order: '1 Burger',
-    name: 'Roberto',
-    location: 'Carpa 4',
-    status: ORDER_STATUSES.PENDING,
-    ETA: null,
-    price: 18
-  },
-  {
-    order: '1 Hotdog - 2 Burguers',
-    name: 'Laura',
-    location: 'Carpa 17',
-    status: ORDER_STATUSES.IN_PROGRESS,
-    ETA: moment().add(1, 'hour').valueOf(),
-    price: 240
-  },
-  {
-    order: '1 Milkshake',
-    name: 'Aylen',
-    location: 'Sombrilla 12',
-    status: ORDER_STATUSES.PENDING,
-    ETA: null,
-    price: 180
-  },
-  {
-    order: '2 French Fries - 2 Burguers',
-    name: 'Fiama',
-    location: 'Carpa 209',
-    status: ORDER_STATUSES.READY,
-    ETA: moment().valueOf(),
-    price: 1829
-  },
-  {
-    order: '8 Hotdog - 2 Burguers',
-    name: 'Laura',
-    location: 'Carpa 127',
-    status: ORDER_STATUSES.IN_PROGRESS,
-    ETA: moment().add(1, 'hour').valueOf(),
-    price: 240
-  },
-  {
-    order: '9 Burguers',
-    name: 'Laura',
-    location: 'Carpa 17',
-    status: ORDER_STATUSES.IN_PROGRESS,
-    ETA: moment().add(2, 'hour').valueOf(),
-    price: 1040
-  }
-]
-
 /**
  * Replaces the status value with a human readable string.
  * @param {string} status
  */
 const mapStatus = (status) => status.replace('_', ' ').toUpperCase()
 
-const mappedOrders = FAKE_ORDERS.map(order => {
+const mapOrders = orders => orders.map(order => {
   order = {
     ...order,
     status: {
@@ -92,7 +40,7 @@ const mappedOrders = FAKE_ORDERS.map(order => {
   return order
 })
 
-// const LOADING_STR = 'Loading...'
+const LOADING_STR = 'Loading...'
 
 /**
  * Home PAge - React Component.
@@ -108,27 +56,39 @@ const mappedOrders = FAKE_ORDERS.map(order => {
  *
  */
 export default function HomePage () {
+  const dispatch = useDispatch()
+  useEffect(() => {
+    dispatch(actions.GetOrders())
+  }, [dispatch])
+
+  const orders = useSelector(state => state.Orders)
+
   return (
     <div>
       <SessionHeader />
-      <Table
-        name="Dashboard"
-        headers={[
-          { name: 'Order', key: 'order' },
-          { name: 'price', key: 'price' },
-          { name: 'Name', key: 'name' },
-          { name: 'Location', key: 'location' },
-          { name: 'Remaining Time', key: 'ETA' },
-          { name: 'Status', key: 'status' }
-        ]}
-        content={mappedOrders}
-        orderBy="ETA"
-        // footerText='Some footer info'
-      />
+      { orders.data
+        ? (
+          <Table
+            name="Dashboard"
+            headers={[
+              { name: '#', key: 'number' },
+              { name: 'Order', key: 'description' },
+              { name: 'price', key: 'price' },
+              { name: 'User', key: 'user' },
+              { name: 'Location', key: 'location' },
+              { name: 'Remaining Time', key: 'ETA' },
+              { name: 'Status', key: 'status' }
+            ]}
+            content={mapOrders(orders.data)}
+            orderBy="ETA"
+            // footerText='Some footer info'
+          />
+        ) : orders.loading
+          ? LOADING_STR
+          : orders.error
+            ? <Alert color="danger">{orders.error}</Alert>
+            : null
+      }
     </div>
   )
-}
-
-HomePage.propTypes = {
-
 }

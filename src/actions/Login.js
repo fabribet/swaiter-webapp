@@ -45,10 +45,3 @@ export const actions = {
     }
   }
 }
-
-/**
- * Returns the selectors to access the User part of the state.
- */
-export const selectors = {
-  GetUser: state => state.User
-}
