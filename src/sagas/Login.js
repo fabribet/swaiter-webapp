@@ -1,6 +1,8 @@
-import { authenticate } from '../api/auth'
 import { call, put, takeLatest } from 'redux-saga/effects'
+
+import { authenticate } from '../api/auth'
 import { actions, types } from '../actions/Login'
+import { HTTPCodes } from '../utils/constants'
 
 /**
  * Handles the Login intent
@@ -8,16 +10,16 @@ import { actions, types } from '../actions/Login'
  */
 function * Login ({ user }) {
   try {
-    // yield put(actions.LoginSuccess({ name: 'UsersName', email: user.email, token: 'asdsasdas.asdasdas.qererq' }))
     const res = yield call(authenticate, user)
     // // Check if res.status ~ 200
     if (res.ok) {
       yield put(actions.LoginSuccess(yield res.json()))
     } else throw res
-  } catch (e) {
-    console.log(e)
-
-    yield put(actions.LoginFailed('There was an error authenticating'))
+  } catch (errorResponse) {
+    const message = errorResponse.status === HTTPCodes.UNAUTHORIZED
+      ? 'The email or password was incorrect'
+      : 'There was an error authenticating'
+    yield put(actions.LoginFailed(message))
   }
 }
 

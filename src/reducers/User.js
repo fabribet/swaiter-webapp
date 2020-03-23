@@ -1,25 +1,39 @@
 import { types } from '../actions/Login'
 
-export default (state = {}, action) => {
+const DEFAULT_STATE = { formSubmit: { loading: false, error: null } }
+
+export default (state = DEFAULT_STATE, action) => {
   switch (action.type) {
     case types.LOGIN_ATTEMPT:
       return {
-        ...state
+        ...state,
+        formSubmit: {
+          ...state.formSubmit,
+          loading: true
+        }
       }
 
     case types.LOGIN_SUCCESS:
       return {
         ...state,
-        ...action.payload
+        ...action.payload,
+        formSubmit: {
+          error: null,
+          loading: false
+        }
       }
 
     case types.LOGIN_FAILED:
       return {
-        ...state
+        ...state,
+        formSubmit: {
+          error: action.error,
+          loading: false
+        }
       }
 
     case types.LOGOUT: {
-      return {}
+      return DEFAULT_STATE
     }
 
     default:

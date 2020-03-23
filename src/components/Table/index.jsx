@@ -41,7 +41,6 @@ function sort (content, orderBy) {
           return 0
         // Descending case
         } else {
-          console.log('descending case')
           if (bVal < aVal) return -1
           else if (aVal < bVal) return 1
           return 0

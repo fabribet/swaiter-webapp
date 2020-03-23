@@ -11,8 +11,9 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container'
+import { Alert } from 'reactstrap'
 
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import FormValidator from '../../validators/FormValidator'
 import { required, email } from '../../validators/customValidations'
@@ -52,6 +53,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function Login () {
   const classes = useStyles()
+  const formSubmit = useSelector(state => state.User.formSubmit)
   const dispatch = useDispatch()
 
   const [email, setEmail] = useState({ value: '' })
@@ -75,7 +77,23 @@ export default function Login () {
   const handlePasswordChange = (event) => setPassword({ value: event.target.value, dirty: true })
 
   const login = () => {
-    if (validation.isValid) dispatch(actions.LoginAttempt({ email: email.value, password: password.value }))
+    if (validation.isValid && !formSubmit.loading) {
+      dispatch(actions.LoginAttempt({ email: email.value, password: password.value }))
+    }
+  }
+
+  /**
+   * Triggers form submission when enter key was pressed.
+   * @param {object} event - keypress event.
+   */
+  const onKeyDown = event => {
+    switch (event.key) {
+      case 'Enter':
+        login()
+        break
+      default:
+        break
+    }
   }
 
   return (
@@ -91,6 +109,11 @@ export default function Login () {
               Sign in
             </Typography>
             <form className={classes.form} noValidate>
+              {formSubmit.error ? (
+                <Alert color="danger">
+                  {formSubmit.error}
+                </Alert>
+              ) : null }
               <TextField
                 variant="outlined"
                 margin="normal"
@@ -104,6 +127,7 @@ export default function Login () {
                 helperText={validation[EMAIL_FIELD].message}
                 autoFocus
                 onChange={handleEmailChange}
+                onKeyDown={onKeyDown}
               />
               <TextField
                 variant="outlined"
@@ -118,6 +142,7 @@ export default function Login () {
                 helperText={validation[PASSWORD_FIELD].message}
                 autoComplete="current-password"
                 onChange={handlePasswordChange}
+                onKeyDown={onKeyDown}
               />
               <FormControlLabel
                 control={<Checkbox value="remember" color="primary" />}
@@ -130,6 +155,8 @@ export default function Login () {
                 color="secondary"
                 className={classes.submit}
                 onClick={login}
+                onKeyDown={onKeyDown}
+                disabled={!validation.isValid || formSubmit.loading}
               >
                 Sign In
               </Button>
