@@ -1,8 +1,6 @@
-// @import '../../scss/breakpoints';
-
 .container {
   max-width: 1024px;
-  margin: 50px auto;
+  margin: 10px auto;
 
   .title {
     margin-left: 15px;
@@ -11,62 +9,17 @@
   }
 
   .table {
-    // display: table;
-    // border-collapse: collapse;
-    // border: 1px solid black;
-
-    // tr {
-    //   border-bottom: 1px solid black;
-    // }
 
     &>thead {
-    //   background-color: gray;
 
       &>tr {
-    //     border-collapse: collapse;
-    //     border-spacing: 0;
+        
         &>th {
-    //       color: rgb(61, 60, 60);
-    //       padding: 15px;
-    //       text-align: center;
           text-transform: uppercase;
           cursor: pointer;
-    //       border: 0;
-
-    //       &.orderBy {
-    //         color: white;
-    //       }
         }
       }
     }
 
-    // &>tbody>tr {
-
-    //   &.yellow {
-    //     background-color: rgb(201, 201, 99);
-    //     color: rgb(39, 36, 36)
-    //   }
-
-    //   &.green {
-    //     background-color: rgb(99, 201, 130);
-    //     color: rgb(53, 53, 53)
-    //   }
-
-    //   &.red {
-    //     background-color: rgb(201, 99, 99);
-    //     color: rgb(39, 36, 36)
-    //   }
-
-    //   &>td {
-    //     padding: 10px;
-    //     min-width: 100px;
-    //     text-align: center;
-    //   }
-    // }
-
-    // &>tfoot>tr>td {
-    //   padding: 15px;
-    //   text-align: center;
-    // }
   }
 }

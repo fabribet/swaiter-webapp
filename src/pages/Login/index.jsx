@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Avatar from '@material-ui/core/Avatar'
 import Button from '@material-ui/core/Button'
 import CssBaseline from '@material-ui/core/CssBaseline'
@@ -12,10 +12,23 @@ import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container'
 
-import { useHistory, useLocation } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
 
-import auth from '../../utils/auth'
+import FormValidator from '../../validators/FormValidator'
+import { required, email } from '../../validators/customValidations'
+
+import { actions } from '../../actions/Login'
 import styles from './styles.module.scss'
+
+// Define form fields
+const EMAIL_FIELD = 'email'
+const PASSWORD_FIELD = 'password'
+
+// validations
+const validator = new FormValidator([
+  ...email(EMAIL_FIELD),
+  ...required(PASSWORD_FIELD)
+])
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -39,16 +52,30 @@ const useStyles = makeStyles(theme => ({
 
 export default function Login () {
   const classes = useStyles()
-  const history = useHistory()
-  const location = useLocation()
+  const dispatch = useDispatch()
 
-  const { from } = location.state || { from: { pathname: '/' } }
+  const [email, setEmail] = useState({ value: '' })
+  const [password, setPassword] = useState({ value: '' })
+
+  const formFields = { email, password }
+  const validation = validator.validate(formFields)
+
+  /**
+   * update state with fields information
+   *
+   * @param event {object} input event
+   */
+  const handleEmailChange = (event) => setEmail({ value: event.target.value, dirty: true })
+
+  /**
+   * update state with fields information
+   *
+   * @param event {object} input event
+   */
+  const handlePasswordChange = (event) => setPassword({ value: event.target.value, dirty: true })
 
   const login = () => {
-    auth.authenticate(() => {
-      console.log('here we are')
-      history.replace(from)
-    })
+    if (validation.isValid) dispatch(actions.LoginAttempt({ email: email.value, password: password.value }))
   }
 
   return (
@@ -69,29 +96,35 @@ export default function Login () {
                 margin="normal"
                 required
                 fullWidth
-                id="email"
+                id={EMAIL_FIELD}
                 label="Email Address"
-                name="email"
-                autoComplete="email"
+                name={EMAIL_FIELD}
+                autoComplete={EMAIL_FIELD}
+                error={!validation[EMAIL_FIELD].isValid && email.dirty}
+                helperText={validation[EMAIL_FIELD].message}
                 autoFocus
+                onChange={handleEmailChange}
               />
               <TextField
                 variant="outlined"
                 margin="normal"
                 required
                 fullWidth
-                name="password"
                 label="Password"
+                name={PASSWORD_FIELD}
+                id={PASSWORD_FIELD}
                 type="password"
-                id="password"
+                error={!validation[PASSWORD_FIELD].isValid && password.dirty}
+                helperText={validation[PASSWORD_FIELD].message}
                 autoComplete="current-password"
+                onChange={handlePasswordChange}
               />
               <FormControlLabel
                 control={<Checkbox value="remember" color="primary" />}
                 label="Remember me"
               />
               <Button
-                type="submit"
+                // type="submit"
                 fullWidth
                 variant="contained"
                 color="secondary"

@@ -1,6 +1,6 @@
-import { types } from '../actions/Favorites'
+import { types } from '../actions/Login'
 
-export default (state = { favorites: {} }, action) => {
+export default (state = {}, action) => {
   switch (action.type) {
     case types.LOGIN_ATTEMPT:
       return {
@@ -10,9 +10,7 @@ export default (state = { favorites: {} }, action) => {
     case types.LOGIN_SUCCESS:
       return {
         ...state,
-        user: {
-          ...action.payload
-        }
+        ...action.payload
       }
 
     case types.LOGIN_FAILED:
@@ -21,10 +19,7 @@ export default (state = { favorites: {} }, action) => {
       }
 
     case types.LOGOUT: {
-      return {
-        ...state,
-        user: null
-      }
+      return {}
     }
 
     default:

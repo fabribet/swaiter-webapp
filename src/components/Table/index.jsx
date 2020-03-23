@@ -23,11 +23,7 @@ function sort (content, orderBy) {
   const sortedRows = [...content]
   const key = orderBy.col
   const asc = orderBy.asc
-  console.log('sorting params', orderBy)
-  console.log('content to sort', sortedRows)
   if (sortedRows.length && sortedRows[0][key]) {
-    console.log(`typeof sortedRows[0][key] === 'number' ? ${typeof sortedRows[0][key] === 'number'}`)
-    console.log(`sortedRows[0][key] = ${sortedRows[0][key]}`)
     if (typeof getColValue(sortedRows[0][key]) === 'number') {
       sortedRows.sort((a, b) => {
         const aVal = getColValue(a[key])
@@ -53,8 +49,6 @@ function sort (content, orderBy) {
       })
     }
   }
-  console.log('sorted rows', sortedRows)
-
   return sortedRows
 }
 
