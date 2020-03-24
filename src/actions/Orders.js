@@ -4,7 +4,8 @@ export const types = {
   GET_ORDERS_SUCCESS: 'GET_ORDERS_SUCCESS',
   GET_ORDERS_FAILED: 'GET_ORDERS_FAILED',
   PUSH_ORDER: 'PUSH_ORDER',
-  UPDATE_ORDER: 'UPDATE_ORDER'
+  UPDATE_ORDER: 'UPDATE_ORDER',
+  SET_ORDER_AS_SEEN: 'SET_ORDER_AS_SEEN'
 }
 
 export const actions = {
@@ -52,6 +53,16 @@ export const actions = {
     return {
       type: types.UPDATE_ORDER,
       order
+    }
+  },
+
+  /**
+   * Generates a Push Order Action
+   */
+  SetOrderAsSeen (id) {
+    return {
+      type: types.SET_ORDER_AS_SEEN,
+      id
     }
   }
 }

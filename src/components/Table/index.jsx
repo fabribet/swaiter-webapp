@@ -97,7 +97,7 @@ export default function SwaiterTable (props) {
         </thead>
         <tbody>
           {sortedRows.map((row, index) =>
-            <tr key={`${props.name}_${index}`} >
+            <tr key={`${props.name}_${index}`} className={row.newItem ? styles.new : ''} >
               {props.headers.map((header, index) =>
                 <td key={`${props.name}_${index}`}>
                   {typeof row[header.key] === 'object' && row[header.key].tableValue

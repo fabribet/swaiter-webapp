@@ -22,5 +22,17 @@
       }
     }
 
+    &>tbody {
+
+      &>tr.new {
+        background-color: rgb(240, 236, 202);    
+        /* transition the background-color over 1s with a linear animation */
+        transition: background-color 1.5s linear;
+        /* the :hover that causes the background-color to change */
+        &:hover {
+            background-color: transparent;      
+        }
+      }
+    }
   }
 }

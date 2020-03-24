@@ -16,12 +16,12 @@ export default (state = DEFAULT_STATE, action) => {
     case types.PUSH_ORDER:
       return {
         ...state,
-        data: [...state.data, action.order]
+        data: [...state.data, { ...action.order, newItem: true }]
       }
 
     case types.UPDATE_ORDER:
       const updatedOrders = state.data.map(order => {
-        if (order.id !== action.order.id) return order
+        if (order._id !== action.order.id) return order
         return {
           ...order,
           ...action.order
@@ -31,6 +31,18 @@ export default (state = DEFAULT_STATE, action) => {
       return {
         ...state,
         data: updatedOrders
+      }
+
+    case types.SET_ORDER_AS_SEEN:
+      return {
+        ...state,
+        data: state.data.map(order => {
+          if (order._id !== action.id) return order
+          return {
+            ...order,
+            newItem: false
+          }
+        })
       }
 
     default:

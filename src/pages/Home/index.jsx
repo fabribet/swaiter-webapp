@@ -3,9 +3,11 @@ import { Badge, Alert } from 'reactstrap'
 import moment from 'moment'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { actions } from '../../actions/Orders'
-import Table from '../../components/Table'
 import SessionHeader from '../../components/SessionHeader'
+import Table from '../../components/Table'
+
+import { actions } from '../../actions/Orders'
+import { BASE_API_URL } from '../../api/utils'
 
 const ORDER_STATUSES = {
   PENDING: 'pending',
@@ -56,12 +58,40 @@ const LOADING_STR = 'Loading...'
  *
  */
 export default function HomePage () {
+  // FIXME array dependency should not contain dispatch.
   const dispatch = useDispatch()
   useEffect(() => {
     dispatch(actions.GetOrders())
   }, [dispatch])
 
   const orders = useSelector(state => state.Orders)
+  // New pushed orders will dismissed after one and a half seconds.
+  useEffect(() => {
+    const timeOuts = []
+    if (orders.data) {
+      orders.data.filter(order => order.newItem).forEach(order => {
+        timeOuts.push(setTimeout(() => {
+          dispatch(actions.SetOrderAsSeen(order._id))
+        }, 1500))
+      })
+    }
+    return () => {
+      timeOuts.forEach(timeOutId => clearTimeout(timeOutId))
+    }
+  }, [orders])
+
+  // Subscribe to new orders
+  useEffect(() => {
+    const evtSource = new EventSource(`${BASE_API_URL}/orders/subscribe`, { withCredentials: false })
+    evtSource.addEventListener('newOrder', (evt) => {
+      // dispatch(actions.PushOrder(evt.data))
+      console.log(evt)
+    })
+    evtSource.onerror = (err) => {
+      console.error('EventSource failed:', err)
+    }
+    return () => evtSource.close()
+  }, [])
 
   return (
     <div>
