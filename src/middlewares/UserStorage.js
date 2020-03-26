@@ -1,5 +1,15 @@
 import { types } from '../actions/Login'
 
+const DEFAULT_STATE = {
+  User: {
+    formSubmit: {
+      data: null,
+      error: null,
+      loading: false
+    }
+  }
+}
+
 /**
  * User Middleware. In charge of saving the user information to the local storage.
  */
@@ -21,9 +31,9 @@ export default class UserStorage {
           User: parsedState
         }
       } catch (e) {
-        return { User: {} }
+        return DEFAULT_STATE
       }
-    } else return { User: {} }
+    } else return DEFAULT_STATE
   }
 
   /**

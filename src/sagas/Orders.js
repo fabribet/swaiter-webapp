@@ -1,7 +1,9 @@
 import { call, put, takeLatest, select } from 'redux-saga/effects'
 
-import { getOrders } from '../api/Orders'
+import { HTTPCodes } from '../utils/constants'
 import { actions, types } from '../actions/Orders'
+import { actions as loginActions } from '../actions/Login'
+import { getOrders } from '../api/Orders'
 
 /**
  * Handles the Get ORders intent
@@ -15,7 +17,8 @@ function * getOrdersHandler () {
       yield put(actions.GetOrdersSuccess(yield res.json()))
     } else throw res
   } catch (errorResponse) {
-    yield put(actions.LoginFailed('There was an error retrieving the orders'))
+    if (errorResponse.status === HTTPCodes.UNAUTHORIZED) yield put(loginActions.Logout())
+    yield put(actions.GetOrdersFailed('There was an error retrieving the orders'))
   }
 }
 

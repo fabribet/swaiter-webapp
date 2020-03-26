@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react'
-import { Badge, Alert } from 'reactstrap'
-import moment from 'moment'
 import { useDispatch, useSelector } from 'react-redux'
+import { Badge, Alert } from 'reactstrap'
+import EventSource from 'eventsource'
+import moment from 'moment'
 
 import SessionHeader from '../../components/SessionHeader'
 import Table from '../../components/Table'
@@ -72,7 +73,7 @@ export default function HomePage () {
       orders.data.filter(order => order.newItem).forEach(order => {
         timeOuts.push(setTimeout(() => {
           dispatch(actions.SetOrderAsSeen(order._id))
-        }, 1500))
+        }, 4000))
       })
     }
     return () => {
@@ -81,17 +82,26 @@ export default function HomePage () {
   }, [orders])
 
   // Subscribe to new orders
+  const token = useSelector(state => state.User.token)
   useEffect(() => {
-    const evtSource = new EventSource(`${BASE_API_URL}/orders/subscribe`, { withCredentials: false })
-    evtSource.addEventListener('newOrder', (evt) => {
-      // dispatch(actions.PushOrder(evt.data))
-      console.log(evt)
+    var eventSourceInitDict = { headers: { Authorization: `Bearer ${token}` } }
+    var evtSource = new EventSource(`${BASE_API_URL}/orders/subscribe`, eventSourceInitDict)
+    evtSource.addEventListener('new-order', (evt) => {
+      if (evt.data) {
+        try {
+          const newOrder = JSON.parse(evt.data)
+          dispatch(actions.PushOrder(newOrder))
+        } catch (error) {
+          // Do something
+        }
+      }
     })
     evtSource.onerror = (err) => {
-      console.error('EventSource failed:', err)
+      // TODO Handle error properly
+      console.error('EventSource failed:', err.data)
     }
     return () => evtSource.close()
-  }, [])
+  }, [token, dispatch])
 
   return (
     <div>
